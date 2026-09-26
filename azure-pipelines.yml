@@ -14,6 +14,8 @@ pool:
 variables:
   MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
   MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  dockerHubRepo: 'rattisyam/petclinicwebapp'
+  tag: '$(Build.BuildId)'
 
 steps:
 - task: Cache@2
@@ -46,15 +48,6 @@ steps:
   displayName: 'Publish Build Artifacts'
 
 - task: Docker@2
-<<<<<<< HEAD
-  displayName: 'Build Docker image'
-  inputs:
-    command: build
-    repository: 'petclinicwebapp'
-    dockerfile: 'Dockerfile'
-    tags: |
-      $(Build.BuildId)
-=======
   displayName: 'Login to Docker Hub'
   inputs:
     containerRegistry: 'DevopsACRsyam'
@@ -66,14 +59,5 @@ steps:
     command: 'buildAndPush'
     repository: '$(dockerHubRepo)'
     Dockerfile: '**/Dockerfile'
-    tags: '$(Build.BuildId)'
-
->>>>>>> 22af06b4f408aa99cf416d69477df470bf5276ac
-
-
-
-
-
-
-
- 
+    tags: |
+      $(tag)
