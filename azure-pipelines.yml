@@ -50,14 +50,16 @@ steps:
 - task: Docker@2
   displayName: 'Login to Docker Hub'
   inputs:
-    containerRegistry: 'DevopsACRsyam'
+    containerRegistry: 'Syam_DockerHub_K8'
     command: 'login'
 - task: Docker@2
   displayName: 'Build and Push Docker image'
   inputs:
-    containerRegistry: 'DevopsACRsyam'
+    containerRegistry: 'Syam_DockerHub_K8'
     command: 'buildAndPush'
     repository: '$(dockerHubRepo)'
     Dockerfile: '**/Dockerfile'
     tags: |
       $(tag)
+
+
