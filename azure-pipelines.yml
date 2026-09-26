@@ -100,8 +100,8 @@ stages:
       displayName: 'Verify cluster connectivity'
 
     - script: |
-        kubectl apply -f k8manifests/petclinic-deployment.yaml
-        kubectl apply -f k8manifests/petclinic-service.yaml
+        kubectl apply -f $(Build.SourcesDirectory)/k8manifests/petclinic-deployment.yaml
+        kubectl apply -f $(Build.SourcesDirectory)/k8manifests/petclinic-service.yaml
         kubectl get pods -o wide
         kubectl get svc -o wide
       displayName: 'Deploy manifests to Kubernetes'
