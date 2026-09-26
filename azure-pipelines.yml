@@ -92,7 +92,7 @@ stages:
 
 - stage: Deploy
   jobs:
-  - job: DeployTo K8Cluster
+  - job: DeployToK8Cluster
     pool:
       name: Default
     steps:
