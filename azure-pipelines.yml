@@ -18,6 +18,11 @@ variables:
   tag: '$(Build.BuildId)'
 
 steps:
+- script: |
+    java -version
+    mvn -version
+  displayName: 'Check Java and Maven versions'
+
 - task: Cache@2
   inputs:
     key: 'maven | "$(Agent.OS)" | $(Build.SourcesDirectory)/pom.xml'
@@ -30,14 +35,24 @@ steps:
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    javaHomeOption: 'Path'
+    jdkDirectory: '/usr/lib/jvm/java-21-openjdk-amd64'
     goals: 'clean package'
-  displayName: Build PetClinic App and Run unit tests
+  displayName: 'Build PetClinic App and Run Unit Tests'
+
+# - task: Maven@4
+#   inputs:
+#     mavenPomFile: 'pom.xml'
+#     mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
+#     javaHomeOption: 'JDKVersion'
+#     jdkVersionOption: '1.11'
+#     jdkArchitectureOption: 'x64'
+#     publishJUnitResults: true
+#     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#     goals: 'clean package'
+#   displayName: Build PetClinic App and Run unit tests
+
+
 
 
 - task: PublishBuildArtifacts@1
