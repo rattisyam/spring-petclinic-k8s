@@ -46,6 +46,7 @@ steps:
   displayName: 'Publish Build Artifacts'
 
 - task: Docker@2
+<<<<<<< HEAD
   displayName: 'Build Docker image'
   inputs:
     command: build
@@ -53,6 +54,21 @@ steps:
     dockerfile: 'Dockerfile'
     tags: |
       $(Build.BuildId)
+=======
+  displayName: 'Login to Docker Hub'
+  inputs:
+    containerRegistry: 'DevopsACRsyam'
+    command: 'login'
+- task: Docker@2
+  displayName: 'Build and Push Docker image'
+  inputs:
+    containerRegistry: 'DevopsACRsyam'
+    command: 'buildAndPush'
+    repository: '$(dockerHubRepo)'
+    Dockerfile: '**/Dockerfile'
+    tags: '$(Build.BuildId)'
+
+>>>>>>> 22af06b4f408aa99cf416d69477df470bf5276ac
 
 
 
