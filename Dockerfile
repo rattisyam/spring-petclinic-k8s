@@ -1,18 +1,14 @@
-#use a specific version of open jdk
-FROM openjdk:11
+# Use a specific version of OpenJDK
+FROM openjdk:11-jre-slim
 
-#set the working directory
+# Set working directory
 WORKDIR /petclinicapp
 
-#copy the jar which was build
-COPY . .
+# Copy only the built JAR (from Maven target folder)
+COPY target/*.jar app.jar
 
-#expose port
-#EXPOSE 8001
+# Expose the default PetClinic port
+EXPOSE 8080
 
-#set the deafulat command to run the jar
-CMD ["java", "-jar" , "spring-petclinic-2.4.5.jar"]
-
-
-
-
+# Run the JAR
+ENTRYPOINT ["java", "-jar", "app.jar"]
