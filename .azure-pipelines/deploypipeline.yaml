@@ -1,0 +1,20 @@
+stages:
+- stage: Deploy
+  jobs:
+  - job: DeployToCluster
+    pool:
+      name: Default
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'manifests'
+        downloadPath: '$(Pipeline.Workspace)'
+      displayName: 'Download Manifests'
+
+    - script: |
+        kubectl apply -f $(Pipeline.Workspace)/manifests/petclinic-deployment.yaml
+        kubectl apply -f $(Pipeline.Workspace)/manifests/petclinic-service.yaml
+        kubectl rollout status deployment petclinic
+      displayName: 'Deploy to Kubernetes'

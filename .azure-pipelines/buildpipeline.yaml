@@ -1,0 +1,76 @@
+trigger:
+- main
+
+pool:
+  name: Default
+#   #vmImage: ubuntu-latest #
+
+
+variables:
+  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+  MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  dockerHubRepo: 'rattisyam/petclinicwebapp'
+  tag: '$(Build.BuildId)'
+
+
+
+steps:
+- script: |
+    java -version
+    mvn -version
+  displayName: 'Check Java and Maven versions'
+
+- task: Cache@2
+  inputs:
+    key: 'maven | "$(Agent.OS)" | $(Build.SourcesDirectory)/pom.xml'
+    restoreKeys: |
+      maven | "$(Agent.OS)"
+      maven
+    #path: $(MAVEN_CACHE_FOLDER)
+    path: /home/azureuser/.m2/repository
+  displayName: Cache Maven local repo
+
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    javaHomeOption: 'Path'
+    jdkDirectory: '/usr/lib/jvm/java-21-openjdk-amd64'
+    goals: 'clean package'
+  displayName: 'Build PetClinic App and Run Unit Tests'
+
+# - task: Maven@4
+#   inputs:
+#     mavenPomFile: 'pom.xml'
+#     mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
+#     javaHomeOption: 'JDKVersion'
+#     jdkVersionOption: '1.11'
+#     jdkArchitectureOption: 'x64'
+#     publishJUnitResults: true
+#     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#     goals: 'clean package'
+#   displayName: Build PetClinic App and Run unit tests
+
+
+
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultworkingDirectory)/target'
+    ArtifactName: 'petclinicwebapp'
+    publishLocation: 'Container'
+  displayName: 'Publish Build Artifacts'
+
+- task: Docker@2
+  displayName: 'Login to Docker Hub'
+  inputs:
+    containerRegistry: 'Syam_DockerHub_K8'
+    command: 'login'
+- task: Docker@2
+  displayName: 'Build and Push Docker image'
+  inputs:
+    containerRegistry: 'Syam_DockerHub_K8'
+    command: 'buildAndPush'
+    repository: '$(dockerHubRepo)'
+    Dockerfile: '**/Dockerfile'
+    tags: |
+      $(tag)
